@@ -6,12 +6,15 @@
 </p>
 
 <p align="center">
-  <a href="https://img.shields.io/badge/lighthouse-100%25-brightgreen"><img src="https://img.shields.io/badge/lighthouse-100%25-brightgreen" alt="Lighthouse 100"></a>
+  <a href="https://madb0i.github.io/gracias-messi/"><img src="https://img.shields.io/badge/▶-LIVE_DEMO-blue" alt="Live Demo"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/html%2Fcss%2Fjs-single_file-blue" alt="Single file">
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome">
 </p>
 
 ---
+
+**[Live Demo →](https://madb0i.github.io/gracias-messi/)** — open on mobile or PC, no install needed.
 
 Open `messi-tribute.html` in any browser. No server needed.
 
