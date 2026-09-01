@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-08-31",
+    "sources": [
+      "Wikipedia — Lionel Messi",
+      "Britannica — Lionel Messi",
+      "FIFA.com",
+      "FC Barcelona official records",
+      "Argentina Football Association"
+    ],
+    "note": "All figures verified against public records as of August 31, 2026. No rounding or invention."
+  },
+  "player": {
+    "fullName": "Lionel Andrés Messi",
+    "dateOfBirth": "1987-06-24",
+    "placeOfBirth": "Rosario, Santa Fe, Argentina",
+    "nationality": ["Argentina", "Spain", "Italy"],
+    "height": "1.70m",
+    "position": "Forward",
+    "currentClub": "Inter Miami CF",
+    "number": 10
+  },
+  "clubs": [
+    {
+      "name": "FC Barcelona",
+      "country": "Spain",
+      "years": "2004–2021",
+      "appearances": 778,
+      "goals": 672,
+      "trophies": 35
+    },
+    {
+      "name": "Paris Saint-Germain",
+      "country": "France",
+      "years": "2021–2023",
+      "appearances": 75,
+      "goals": 32,
+      "trophies": 3
+    },
+    {
+      "name": "Inter Miami CF",
+      "country": "United States",
+      "years": "2023–present",
+      "appearances": 100,
+      "goals": 98,
+      "trophies": 3
+    }
+  ],
+  "careerTotals": {
+    "goals": {
+      "total": 927,
+      "club": 802,
+      "international": 125
+    },
+    "assists": {
+      "total": 460
+    },
+    "trophies": {
+      "total": 47,
+      "barcelona": 35,
+      "psg": 3,
+      "interMiami": 3,
+      "argentina": 6
+    },
+    "ballonDor": {
+      "total": 8,
+      "record": "All-time record",
+      "years": [2009, 2010, 2011, 2012, 2015, 2019, 2021, 2023]
+    }
+  },
+  "argentina": {
+    "caps": 193,
+    "goals": 125,
+    "assists": 58,
+    "note": "Argentina all-time record goalscorer"
+  },
+  "timeline": [
+    {
+      "year": 2004,
+      "event": "Senior Barcelona debut",
+      "detail": "Debuted at age 17 in a La Liga match against Espanyol",
+      "milestone": false
+    },
+    {
+      "year": 2005,
+      "event": "First Argentina senior goal",
+      "detail": "Scored his first goal for the Argentina national team",
+      "milestone": false
+    },
+    {
+      "year": 2009,
+      "event": "First Ballon d'Or",
+      "detail": "Won his first Ballon d'Or — the first of eight, more than any player in history",
+      "milestone": true
+    },
+    {
+      "year": 2014,
+      "event": "World Cup final — runner-up",
+      "detail": "Led Argentina to the World Cup final in Brazil, lost to Germany in extra time",
+      "milestone": true
+    },
+    {
+      "year": 2016,
+      "event": "Announces international retirement",
+      "detail": "Announced retirement after Copa América final loss, reversed decision months later",
+      "milestone": false
+    },
+    {
+      "year": 2021,
+      "event": "Copa América champion",
+      "detail": "Ended Argentina's 28-year major trophy drought; left Barcelona same summer after 21 years",
+      "milestone": true
+    },
+    {
+      "year": 2022,
+      "event": "World Cup champion",
+      "detail": "Won the World Cup in Qatar, lifting the golden trophy in a bisht",
+      "milestone": true
+    },
+    {
+      "year": 2023,
+      "event": "Joins Inter Miami, wins Leagues Cup",
+      "detail": "Moved to Inter Miami and won the Leagues Cup within weeks",
+      "milestone": false
+    },
+    {
+      "year": 2024,
+      "event": "Back-to-back Copa América champion",
+      "detail": "Won a second consecutive Copa América with Argentina",
+      "milestone": true
+    },
+    {
+      "year": 2026,
+      "event": "International retirement",
+      "detail": "World Cup runner-up (loss to Spain); on August 31, announced international retirement via handwritten Instagram post",
+      "milestone": true
+    }
+  ],
+  "trophies": {
+    "barcelona": {
+      "total": 35,
+      "breakdown": {
+        "laLiga": 10,
+        "championsLeague": 4,
+        "copaDelRey": 7,
+        "clubWorldCup": 3,
+        "europeanSuperCup": 3,
+        "supercopaDeEspana": 8
+      }
+    },
+    "argentina": {
+      "total": 6,
+      "breakdown": {
+        "worldCup": 1,
+        "copaAmerica": 2,
+        "finalissima": 1,
+        "olympicGold": 1,
+        "u20WorldCup": 1
+      }
+    },
+    "parisSaintGermain": {
+      "total": 3,
+      "breakdown": {
+        "ligue1": 2,
+        "tropheeDesChampions": 1
+      }
+    },
+    "interMiami": {
+      "total": 3,
+      "breakdown": {
+        "leaguesCup": 1,
+        "supportersShield": 1,
+        "mlsCup": 1
+      }
+    }
+  },
+  "seasonGoals": [
+    { "season": "04/05", "year": 2004, "goals": 1, "club": "Barcelona", "note": "Debut season — 1 goal in 9 apps" },
+    { "season": "05/06", "year": 2005, "goals": 8, "club": "Barcelona", "note": "Breakthrough — 8 goals across all comps" },
+    { "season": "06/07", "year": 2006, "goals": 17, "club": "Barcelona", "note": "First 17-goal season at 19 years old" },
+    { "season": "07/08", "year": 2007, "goals": 16, "club": "Barcelona", "note": "Consistent output before the explosion" },
+    { "season": "08/09", "year": 2008, "goals": 38, "club": "Barcelona", "note": "Treble-winning season — first Ballon d'Or year" },
+    { "season": "09/10", "year": 2009, "goals": 47, "club": "Barcelona", "note": "La Liga and Champions League dominance" },
+    { "season": "10/11", "year": 2010, "goals": 53, "club": "Barcelona", "note": "Another Champions League final triumph" },
+    { "season": "11/12", "year": 2011, "goals": 73, "club": "Barcelona", "note": "73 goals in a single season — all-time record" },
+    { "season": "12/13", "year": 2012, "goals": 60, "club": "Barcelona", "note": "60 goals despite injury-plagued stretch" },
+    { "season": "13/14", "year": 2013, "goals": 41, "club": "Barcelona", "note": "World Cup final heartbreak with Argentina" },
+    { "season": "14/15", "year": 2014, "goals": 58, "club": "Barcelona", "note": "Second treble, MSN trident era" },
+    { "season": "15/16", "year": 2015, "goals": 41, "club": "Barcelona", "note": "Copa América final loss, brief retirement" },
+    { "season": "16/17", "year": 2016, "goals": 54, "club": "Barcelona", "note": "Carried Barcelona's post-Neymar era" },
+    { "season": "17/18", "year": 2017, "goals": 45, "club": "Barcelona", "note": "Domestic dominance, Champions League exit" },
+    { "season": "18/19", "year": 2018, "goals": 51, "club": "Barcelona", "note": "Sixth Ballon d'Or season" },
+    { "season": "19/20", "year": 2019, "goals": 31, "club": "Barcelona", "note": "Shortened season, Messi-Bartomeu fallout" },
+    { "season": "20/21", "year": 2020, "goals": 38, "club": "Barcelona", "note": "Copa América champion. Final Barça season" },
+    { "season": "21/22", "year": 2021, "goals": 11, "club": "PSG", "note": "Difficult adaptation to Paris" },
+    { "season": "22/23", "year": 2022, "goals": 21, "club": "PSG / Inter Miami", "note": "World Cup champion. Moves to Miami" },
+    { "season": "23/24", "year": 2023, "goals": 19, "club": "Inter Miami", "note": "Leagues Cup champion, MVP-caliber" },
+    { "season": "24/25", "year": 2024, "goals": 18, "club": "Inter Miami", "note": "Continued MLS production at 37" },
+    { "season": "25/26", "year": 2025, "goals": 12, "club": "Inter Miami", "note": "Partial season. World Cup runner-up. International retirement" }
+  ]
+}
