@@ -6,6 +6,12 @@
 </p>
 
 <p align="center">
+  <img src="assets/recap-demo.gif" alt="The 'Generate my recap' feature in action — the site draws and records a 15-second video in your browser" width="300">
+  <br>
+  <sub>A real capture of the <strong>Generate my recap</strong> feature — the site draws a 15-second video and records it in your browser.</sub>
+</p>
+
+<p align="center">
   <a href="https://madb0i.github.io/gracias-messi/"><img src="https://img.shields.io/badge/▶-LIVE_DEMO-blue" alt="Live Demo"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/html%2Fcss%2Fjs-vanilla-blue" alt="Vanilla HTML/CSS/JS">
@@ -43,6 +49,7 @@ file plus small dependency-free JS modules.
   GOAT easter egg (type it).
 
 **Also in the repo:**
+- [`assets/recap-demo.mp4`](assets/recap-demo.mp4) — the full 1080×1920 recap capture (0.5MB)
 - [`messi-career.json`](messi-career.json) — all verified stats as reusable JSON
 - [`widget.html`](widget.html) — an embeddable mini tribute (200px)
 - [`SOURCES.md`](SOURCES.md) — where every quote and number comes from

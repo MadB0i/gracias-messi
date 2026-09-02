@@ -6,3 +6,4 @@ Desktop.ini
 *.log
 *.swp
 *~
+node_modules/

@@ -1,0 +1,18 @@
+{
+  "name": "gracias-messi",
+  "version": "1.0.0",
+  "description": "A single-page tribute to Lionel Messi's international career — notebook paper, verified data, no frameworks, no backend, no build step.",
+  "private": true,
+  "license": "MIT",
+  "homepage": "https://madb0i.github.io/gracias-messi/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MadB0i/gracias-messi.git"
+  },
+  "scripts": {
+    "capture:recap": "node scripts/capture-recap.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
