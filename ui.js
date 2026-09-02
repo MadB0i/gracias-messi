@@ -248,6 +248,7 @@
   }
 
   function confetti() {
+    if (reduceMotion) return;
     if (!ensureCanvas()) return;
     var W = window.innerWidth;
     var H = window.innerHeight;
@@ -380,6 +381,9 @@
     window.addEventListener('resize', function () { measure(); update(); });
     window.addEventListener('load', function () { measure(); update(); });
   }
+
+  // Public API — other modules (e.g. the Wall) can fire a confetti burst.
+  window.__GM_CONFETTI = confetti;
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
