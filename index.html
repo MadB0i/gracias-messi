@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>document.documentElement.className += ' js';</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lionel Messi — An Era with Argentina</title>
@@ -1368,11 +1369,351 @@
     font-size: 0.9em;
   }
 
+  /* ── Ink scroll progress (along the red margin line) ── */
+  .ink-progress {
+    position: fixed;
+    top: 0;
+    left: 79px;
+    width: 2px;
+    height: 100vh;
+    z-index: 30;
+    pointer-events: none;
+  }
+
+  .ink-progress__fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--blue), var(--navy));
+    transform: scaleY(0);
+    transform-origin: top;
+    border-radius: 1px;
+  }
+
+  .page-no {
+    position: fixed;
+    right: 20px;
+    bottom: 14px;
+    font-family: 'Caveat', cursive;
+    font-size: 1.05rem;
+    color: var(--blue-deep);
+    opacity: 0.6;
+    z-index: 30;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1279px) {
+    .ink-progress { display: none; }
+  }
+
+  /* ── Chapter dot nav ── */
+  .chapnav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 40;
+  }
+
+  .chapnav__dot {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(26, 39, 68, 0.35);
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .chapnav__dot:hover,
+  .chapnav__dot:focus-visible {
+    border-color: var(--blue-deep);
+    transform: scale(1.25);
+  }
+
+  .chapnav__dot.on {
+    background: var(--blue-deep);
+    border-color: var(--blue-deep);
+    transform: scale(1.25);
+  }
+
+  .chapnav__label {
+    position: absolute;
+    right: 26px;
+    top: 50%;
+    transform: translate(8px, -50%);
+    font-family: 'Caveat', cursive;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--blue-deep);
+    background: rgba(245, 240, 225, 0.94);
+    border: 1px solid var(--paper-line);
+    padding: 0.05rem 0.7rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .chapnav__dot:hover .chapnav__label,
+  .chapnav__dot:focus-visible .chapnav__label,
+  .chapnav__dot.on .chapnav__label {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+
+  @media (max-width: 899px) {
+    .chapnav { display: none; }
+  }
+
+  /* ── Reveal on scroll (opt-in via .js on <html>) ── */
+  .js .rv {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--rv-delay, 0ms);
+  }
+
+  .js .rv.rv-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .rv {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* ── Timeline self-draw ── */
+  .timeline__fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 0%;
+    background: linear-gradient(to bottom, var(--blue), var(--navy));
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /* ── Trophy micro-interactions ── */
+  .trophies__group {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--paper-line);
+    background: rgba(255, 255, 255, 0.35);
+    padding: 1.4rem 1.5rem 1.5rem;
+    border-radius: 4px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trophies__group:hover,
+  .trophies__group:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px -16px rgba(26, 39, 68, 0.35);
+  }
+
+  .trophies__group::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -70%;
+    width: 50%;
+    background: linear-gradient(105deg, transparent, rgba(197, 165, 90, 0.16), transparent);
+    transform: skewX(-18deg);
+    pointer-events: none;
+    transition: left 0.6s ease;
+  }
+
+  .trophies__group:hover::after {
+    left: 130%;
+  }
+
+  .trophies__count {
+    display: inline-block;
+  }
+
+  .trophies__group:hover .trophies__count {
+    animation: trophy-wobble 0.55s ease;
+  }
+
+  @keyframes trophy-wobble {
+    0% { transform: rotate(0); }
+    30% { transform: rotate(-5deg); }
+    60% { transform: rotate(4deg); }
+    100% { transform: rotate(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trophies__group,
+    .trophies__group::after,
+    .trophies__count {
+      transition: none;
+      animation: none;
+      transform: none;
+    }
+  }
+
+  /* ── GOAT easter egg toast ── */
+  .goat-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 104px;
+    transform: translate(-50%, 10px);
+    font-family: 'Caveat', cursive;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--navy);
+    background: rgba(245, 240, 225, 0.95);
+    border: 1px solid var(--paper-line);
+    padding: 0.4rem 1.4rem;
+    border-radius: 3px;
+    box-shadow: 0 8px 20px -12px rgba(26, 39, 68, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 60;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .goat-toast.on {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* Keep the hero ink line from blowing up when re-inked with short text */
+  .hero .ink-svg {
+    max-height: 140px;
+  }
+
+  /* ── GOOOAL button + confetti canvas ── */
+  .goal-btn {
+    position: fixed;
+    left: 22px;
+    bottom: 22px;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    border: 2px solid var(--navy);
+    background: var(--cream);
+    color: var(--navy);
+    cursor: pointer;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    box-shadow: 3px 3px 0 rgba(26, 39, 68, 0.18);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .goal-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 4px 6px 0 rgba(26, 39, 68, 0.18);
+  }
+
+  .goal-btn:active {
+    transform: translateY(0) scale(0.95);
+    box-shadow: 2px 2px 0 rgba(26, 39, 68, 0.18);
+  }
+
+  .goal-btn.pop {
+    animation: goal-pop 0.3s ease;
+  }
+
+  @keyframes goal-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.12) rotate(-3deg); }
+    100% { transform: scale(1); }
+  }
+
+  .goal-btn__ball {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1.5px solid var(--navy);
+  }
+
+  .goal-btn__ball::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--navy);
+    transform: translate(-50%, -50%);
+    clip-path: polygon(50% 0, 100% 38%, 81% 100%, 19% 100%, 0 38%);
+  }
+
+  .goal-btn__label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+
+  .goal-btn__count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    border-radius: 11px;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    line-height: 20px;
+    text-align: center;
+    border: 1px solid rgba(26, 39, 68, 0.25);
+  }
+
+  @media (max-width: 720px) {
+    .goal-btn {
+      left: 14px;
+      bottom: 14px;
+      width: 60px;
+      height: 60px;
+    }
+    .goal-btn__label { font-size: 0.72rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .goal-btn,
+    .goal-btn.pop {
+      transition: none;
+      animation: none;
+    }
+  }
+
+  .confetti-cv {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 90;
+  }
+
   /* Print / high-contrast */
   @media print {
     body { background: white; }
     .hero__bg-number { opacity: 0.03; }
     .tilt-card__inner { transform: none; }
+    .ink-progress, .page-no, .chapnav, .goal-btn, .goat-toast { display: none; }
   }
 </style>
 </head>
@@ -1399,7 +1740,7 @@
 </section>
 
 <!-- ═══ STATS ═══ -->
-<section class="stats" aria-label="Career numbers" data-cmd="Career numbers" data-cmd-sub="goals, assists, trophies, Ballons d'Or">
+<section class="stats" id="numbers" aria-label="Career numbers" data-cmd="Career numbers" data-cmd-sub="goals, assists, trophies, Ballons d'Or">
   <p class="stats__label">The numbers that define an era</p>
   <div class="stats__grid">
     <div class="stat" data-cmd="927 career goals" data-cmd-sub="802 club · 125 international">
@@ -1436,7 +1777,7 @@
 </section>
 
 <!-- ═══ GOALS CHART ═══ -->
-<section class="chart-section" aria-label="Goals per season" data-cmd="Goals by season" data-cmd-sub="22 seasons, 2004–2026">
+<section class="chart-section" id="seasons" aria-label="Goals per season" data-cmd="Goals by season" data-cmd-sub="22 seasons, 2004–2026">
   <h2 class="chart__heading">Goals by season</h2>
   <p class="chart__sub">Every season, every club. Hover for details.</p>
   <div class="chart" id="goalsChart"></div>
@@ -1468,7 +1809,7 @@
 </section>
 
 <!-- ═══ IMAGE GALLERY ═══ -->
-<section class="gallery" aria-label="Historic moments" data-cmd="Historic moments" data-cmd-sub="3D photo gallery">
+<section class="gallery" id="moments" aria-label="Historic moments" data-cmd="Historic moments" data-cmd-sub="3D photo gallery">
   <h2 class="gallery__heading">Moments that defined an era</h2>
   <p class="gallery__sub">Hover to explore</p>
   <div class="gallery__grid">
@@ -1508,7 +1849,7 @@
 
     <div class="tilt-card" tabindex="0">
       <div class="tilt-card__inner">
-        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Lionel_Messi_Joan_Gamper_Trophy.jpg/960px-Lionel_Messi_Joan_Gamper_Trophy.jpg" alt="Lionel Messi in action for Barcelona, Joan Gamper Trophy 2009, Camp Nou" loading="lazy">
+        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/2006_Champions_League_Trophy.jpg/960px-2006_Champions_League_Trophy.jpg" alt="The European Cup — the big ears he lifted twice in those four years, 2009 and 2011" loading="lazy">
         <div class="tilt-card__shine"></div>
         <div class="tilt-card__caption">
           <div class="tilt-card__year">2009–2012</div>
@@ -1540,11 +1881,11 @@
     </div>
 
   </div>
-  <p class="gallery__caption">Photography via Wikimedia Commons: Elsapucai (CC BY 3.0) · PitchdGroundhopping (CC BY-SA 4.0) · Lmbuga (CC BY-SA 3.0) · Tsutomu Takasu (CC BY 2.0) · Djawed_vlog (CC BY 3.0) · Buenos Aires jersey exhibit (CC BY 4.0)</p>
+  <p class="gallery__caption">Photography via Wikimedia Commons: Elsapucai (CC BY 3.0) · PitchdGroundhopping (CC BY-SA 4.0) · Lmbuga (CC BY-SA 3.0) · Gaetano Porcaro (CC BY 2.0) · Djawed_vlog (CC BY 3.0) · Buenos Aires jersey exhibit (CC BY 4.0)</p>
 </section>
 
 <!-- ═══ TIMELINE ═══ -->
-<section class="timeline" aria-label="Career timeline" data-cmd="Timeline" data-cmd-sub="career milestones 2004–2026">
+<section class="timeline" id="timeline" aria-label="Career timeline" data-cmd="Timeline" data-cmd-sub="career milestones 2004–2026">
   <h2 class="timeline__heading">A life in the game</h2>
   <div class="timeline__track">
 
@@ -1602,7 +1943,7 @@
 </section>
 
 <!-- ═══ BIO ═══ -->
-<section class="bio" aria-label="Biography" data-cmd="The full story" data-cmd-sub="5-chapter biography">
+<section class="bio" id="story" aria-label="Biography" data-cmd="The full story" data-cmd-sub="5-chapter biography">
   <h2 class="bio__title">The full story</h2>
 
   <article class="bio__chapter" data-cmd="Chapter I — Rosario" data-cmd-sub="childhood, Newell's, the Machine of '87">
@@ -1703,7 +2044,7 @@
 </section>
 
 <!-- ═══ TROPHY CASE ═══ -->
-<section class="trophies" aria-label="Trophy case" data-cmd="Trophy case" data-cmd-sub="47 trophies across four teams">
+<section class="trophies" id="trophies" aria-label="Trophy case" data-cmd="Trophy case" data-cmd-sub="47 trophies across four teams">
   <h2 class="trophies__heading">47 trophies, four clubs</h2>
 
   <div class="trophies__group" data-cmd="Barcelona — 35 trophies" data-cmd-sub="La Liga, Champions League, Copa del Rey">
@@ -1760,7 +2101,7 @@
 </section>
 
 <!-- ═══ NOTE ═══ -->
-<section class="note" aria-label="Retirement note" data-cmd="The retirement note" data-cmd-sub="paraphrased, written in ink">
+<section class="note" id="note" aria-label="Retirement note" data-cmd="The retirement note" data-cmd-sub="paraphrased, written in ink">
   <div class="note__card">
     <div class="ink-block ink-note" aria-label="I gave everything for this shirt. Gracias, Argentina.">
       <span class="ink-line" data-text="I gave everything for this shirt."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
@@ -2101,5 +2442,6 @@
 <script src="note.js" defer></script>
 <script src="stars.js" defer></script>
 <script src="palette.js" defer></script>
+<script src="ui.js" defer></script>
 </body>
 </html>

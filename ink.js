@@ -32,6 +32,8 @@
   };
 
   var INK = '#1e2f56';
+  var drawing = {}; // block element → animation in flight (guards redraw re-entrancy)
+  var pendingRedraw = {}; // block element → redraw queued until current draw finishes
 
   function init() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // CSS keeps static fallback
@@ -99,6 +101,7 @@
   }
 
   function drawBlock(block) {
+    if (drawing[block]) return;
     var parts = Array.prototype.map.call(block.querySelectorAll('.ink-line'), function (line) {
       var svg = line.querySelector('.ink-svg');
       return buildLine(svg, line.getAttribute('data-text') || '');
@@ -109,13 +112,19 @@
       p.queue.forEach(function (q) { flat.push({ q: q, part: p }); });
     });
     if (!flat.length) return;
+    drawing[block] = true;
 
     var i = 0, segStart = null;
 
     function frame(now) {
       if (i >= flat.length) {
+        drawing[block] = false;
         parts.forEach(function (p) { p.nib.style.opacity = 0; });
         block.classList.add('ink-done');
+        if (pendingRedraw[block]) {
+          pendingRedraw[block] = false;
+          window.__GM_INK.redraw(block);
+        }
         return;
       }
       var cur = flat[i];
@@ -144,6 +153,24 @@
     flat[0].part.nib.setAttribute('transform', 'translate(' + sp0.x + ' ' + sp0.y + ')');
     requestAnimationFrame(frame);
   }
+
+  /* Public API — lets the GOAT easter egg (ui.js) re-ink a block with
+     new text without waiting for scroll. Clears existing strokes + nib
+     first, then redraws from scratch. If a draw is already in flight,
+     the redraw is queued and runs when it finishes. */
+  window.__GM_INK = {
+    redraw: function (block) {
+      if (!block) return;
+      if (drawing[block]) {
+        pendingRedraw[block] = true;
+        return;
+      }
+      var svgs = block.querySelectorAll('.ink-svg');
+      for (var s = 0; s < svgs.length; s++) svgs[s].innerHTML = '';
+      block.classList.remove('ink-done');
+      drawBlock(block);
+    }
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

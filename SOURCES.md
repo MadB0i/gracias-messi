@@ -55,16 +55,16 @@ this on the page.
 
 The "Historic moments" gallery uses freely-licensed photography from
 Wikimedia Commons of the actual places and objects — Rosario's city center,
-Newell's Old Boys' stadium (El Coloso de la Ribera), Camp Nou, a 2009 action
-shot of Messi at Camp Nou, Lusail Stadium (2022 World Cup final venue), and
-an exhibit of Argentina's historic national-team jerseys. Licenses and
-authors, credited in the page caption:
+Newell's Old Boys' stadium (El Coloso de la Ribera), Camp Nou, the European
+Cup ("the big ears", which he lifted in 2009 and 2011), Lusail Stadium
+(2022 World Cup final venue), and an exhibit of Argentina's historic
+national-team jerseys. Licenses and authors, credited in the page caption:
 
 | Image | File | License | Author |
 |-------|------|---------|--------|
 | Rosario city center | City_Center_Rosario_desde_Autopista_Panamericana.JPG | CC BY 3.0 | Elsapucai |
 | Newell's stadium | Estadio_Marcelo_Bielsa.jpg | CC BY-SA 4.0 | PitchdGroundhopping |
 | Camp Nou | 2014._Camp_Nou._Més_que_un_club._Barcelona_B40.jpg | CC BY-SA 3.0 | Luis Miguel Bugallo Sánchez (Lmbuga) |
-| Messi in action, 2009 | Lionel_Messi_Joan_Gamper_Trophy.jpg | CC BY 2.0 | Tsutomu Takasu |
+| The European Cup (2009, 2011) | 2006_Champions_League_Trophy.jpg | CC BY 2.0 | Gaetano Porcaro |
 | Lusail Stadium | Aerial_view_of_Lusail_Stadium_during_the_daytime.png | CC BY 3.0 | Djawed_vlog |
 | Argentina jerseys exhibit | Argentina_historic_football_jerseys.jpg | CC BY 4.0 | Unknown author |
