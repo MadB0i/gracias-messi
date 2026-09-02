@@ -1,13 +1,21 @@
-/* ink.js — real pen-stroke reveal.
-   A hand-drawn monoline cursive alphabet (19 glyphs) is composed into
-   SVG paths; each path is drawn with stroke-dashoffset while a small
-   nib follows getPointAtLength. Triggered by IntersectionObserver,
-   runs once. prefers-reduced-motion → static Caveat text instead. */
+/* ink.js — handwriting + margin-sketch stroke reveal.
+   Layout-correct by construction: each .ink-line keeps the REAL webfont
+   text (.ink-real) in normal flow — the browser owns the width, wrapping,
+   and per-character positions. The hand-drawn SVG is an absolute overlay;
+   every glyph is measured against its real character's box (Range
+   geometry) and scaled to fit that cell (x-height from canvas font
+   metrics), so layout correctness comes from the browser's own text
+   layout, never from hardcoded path coordinates. When the draw completes
+   the real text fades in and the overlay fades out.
+   Shared animateSequence powers the handwriting AND the margin sketch.
+   prefers-reduced-motion → static real text, no SVG. */
 (function () {
   'use strict';
 
-  /* Each glyph: adv = advance width, paths = pen strokes in writing order.
-     Local box: baseline y=100, x-height y=64, ascender ~y=28, descender ~y=132. */
+  /* Hand-drawn monoline cursive alphabet. Local box: baseline y=100,
+     x-height y=64 (36 units), ascender ~y=28, descender ~y=132.
+     adv is legacy (kept for reference); placement now comes from the
+     real text metrics, not these advances. */
   var A = {
     'G': { adv: 68, paths: ['M 46,44 C 36,32 20,34 14,52 C 8,72 12,94 30,101 C 40,104 48,98 48,89 C 48,80 41,75 34,79'] },
     'A': { adv: 68, paths: ['M 5,100 C 14,76 24,50 32,34 C 35,28 40,28 42,36 C 46,56 48,80 49,100', 'M 16,78 C 27,75 37,75 45,78'] },
@@ -34,28 +42,36 @@
   var INK = '#1e2f56';
   var drawing = {}; // block element → animation in flight (guards redraw re-entrancy)
   var pendingRedraw = {}; // block element → redraw queued until current draw finishes
+  var probeCanvas = null, probeCtx = null;
 
-  function init() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // CSS keeps static fallback
-    var blocks = document.querySelectorAll('.ink-block');
-    if (!blocks.length) return;
-
-    blocks.forEach(function (b) { b.classList.add('ink-live'); }); // swap fallback → svg
-
-    if (!('IntersectionObserver' in window)) {
-      blocks.forEach(drawBlock);
-      return;
+  /* Precompute each glyph's ink bounding box (design units). */
+  function pathBBox(d) {
+    var minX = Infinity, maxX = -Infinity;
+    var re = /([MLC])\s*((?:-?\d+\.?\d*\s*,\s*-?\d+\.?\d*\s*)+)/g;
+    var m;
+    while ((m = re.exec(d)) !== null) {
+      var nums = m[2].trim().split(/[,\s]+/).map(Number);
+      for (var n = 0; n < nums.length; n += 2) {
+        if (isNaN(nums[n]) || isNaN(nums[n + 1])) continue;
+        if (nums[n] < minX) minX = nums[n];
+        if (nums[n] > maxX) maxX = nums[n];
+      }
     }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          drawBlock(e.target);
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.45 });
-    blocks.forEach(function (b) { io.observe(b); });
+    return { minX: minX, maxX: maxX };
   }
+  var GB = {};
+  (function () {
+    for (var ch in A) {
+      if (!A[ch].paths.length) { GB[ch] = { minX: 0, maxX: 0 }; continue; }
+      var minX = Infinity, maxX = -Infinity;
+      A[ch].paths.forEach(function (d) {
+        var b = pathBBox(d);
+        if (b.minX < minX) minX = b.minX;
+        if (b.maxX > maxX) maxX = b.maxX;
+      });
+      GB[ch] = { minX: minX, maxX: maxX };
+    }
+  })();
 
   function jitter(i) {
     return {
@@ -64,19 +80,149 @@
     };
   }
 
-  function createNib(svg) {
+  /* ── Font metrics (real browser font, via canvas) ── */
+  function probe() {
+    if (!probeCanvas) {
+      probeCanvas = document.createElement('canvas');
+      probeCanvas.width = 1;
+      probeCanvas.height = 1;
+      probeCtx = probeCanvas.getContext('2d');
+    }
+    return probeCtx;
+  }
+
+  function fontString(cs) {
+    var fam = cs.fontFamily.split(',').map(function (f) {
+      f = f.trim();
+      if (/\s/.test(f) && !(/^['"].*['"]$/.test(f))) f = "'" + f + "'";
+      return f;
+    }).join(', ');
+    return (cs.fontWeight || '400') + ' ' + cs.fontSize + ' ' + fam;
+  }
+
+  function fontMetrics(cs) {
+    var fs = parseFloat(cs.fontSize) || 16;
+    var xh = fs * 0.5, asc = fs * 0.75, desc = fs * 0.25; // fallbacks
+    var ctx = probe();
+    if (ctx) {
+      try {
+        ctx.font = fontString(cs);
+        var mx = ctx.measureText('x');
+        var mh = ctx.measureText('h');
+        var mp = ctx.measureText('p');
+        if (mx.actualBoundingBoxAscent) xh = mx.actualBoundingBoxAscent;
+        if (mh.actualBoundingBoxAscent) asc = mh.actualBoundingBoxAscent;
+        if (mp.actualBoundingBoxDescent) desc = mp.actualBoundingBoxDescent;
+      } catch (err) { /* keep fallbacks */ }
+    }
+    return { xh: xh, asc: asc, desc: desc };
+  }
+
+  /* Measured baseline offset (px from a line box's top to the text
+     baseline) for a given inline element's font style. Probes a single
+     ascender-only char 'h' — its bottom IS the baseline. */
+  function baselineOffset(real) {
+    var cs = getComputedStyle(real);
+    var probe = document.createElement('span');
+    probe.style.cssText = 'font-family:' + cs.fontFamily +
+      ';font-size:' + cs.fontSize + ';font-weight:' + cs.fontWeight +
+      ';line-height:' + cs.lineHeight +
+      ';position:absolute;left:-99999px;top:0;visibility:hidden;';
+    probe.textContent = 'h';
+    (real.parentNode || document.body).appendChild(probe);
+    var lineRect = probe.getBoundingClientRect();
+    var range = document.createRange();
+    range.selectNodeContents(probe);
+    var hRect = range.getBoundingClientRect();
+    probe.remove();
+    if (!lineRect.height || !hRect.height) return null;
+    return hRect.bottom - lineRect.top;
+  }
+
+  /* Measure the REAL text of one ink line: per-character boxes (Range
+     geometry — the browser's layout) + baseline offset. */
+  function measureLine(line) {
+    var real = line.querySelector('.ink-real');
+    if (!real) return null;
+    var text = line.getAttribute('data-text') || '';
+    if (!text) return null;
+    var i, c;
+    for (i = 0; i < text.length; i++) {
+      c = text[i];
+      if (c !== ' ' && !A[c]) return null; // unsupported glyph → real text only
+    }
+    var lineRect = real.getBoundingClientRect();
+    if (!lineRect.width || !lineRect.height) return null;
+
+    var cs = getComputedStyle(real);
+    var fm = fontMetrics(cs);
+    var baseOff = baselineOffset(real);
+    if (baseOff === null) baseOff = fm.asc; // degraded probe fallback
+
+    var nodes = [];
+    (function walk(n) {
+      Array.prototype.forEach.call(n.childNodes, function (ch) {
+        if (ch.nodeType === 3) nodes.push(ch);
+        else walk(ch);
+      });
+    })(real);
+
+    var chars = [];
+    var idx = 0;
+    var range = document.createRange();
+    nodes.forEach(function (tn) {
+      for (var k = 0; k < tn.data.length; k++) {
+        if (idx >= text.length) break;
+        range.setStart(tn, k);
+        range.setEnd(tn, k + 1);
+        var r = range.getBoundingClientRect();
+        chars.push({
+          ch: text[idx],
+          left: r.left - lineRect.left,
+          right: r.right - lineRect.left,
+          top: r.top - lineRect.top
+        });
+        idx++;
+      }
+    });
+
+    if (!chars.some(function (ch2) { return ch2.ch !== ' '; })) return null;
+
+    return {
+      W: lineRect.width,
+      H: lineRect.height,
+      chars: chars,
+      xh: fm.xh,
+      baseOff: baseOff
+    };
+  }
+
+  function createNib(svg, big) {
+    var rOut = big ? 9 : 4;
+    var rIn = big ? 3.2 : 1.6;
     var nib = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     nib.setAttribute('class', 'ink-nib');
     nib.style.opacity = 0;
-    nib.innerHTML = '<circle r="9" fill="' + INK + '" opacity="0.12"></circle><circle r="3.2" fill="' + INK + '"></circle>';
+    nib.innerHTML = '<circle r="' + rOut + '" fill="' + INK + '" opacity="0.12"></circle><circle r="' + rIn + '" fill="' + INK + '"></circle>';
     svg.appendChild(nib);
     return nib;
   }
 
-  /* Shared stroke-sequence animator. Used by the handwriting (one nib
-     per line) and the margin sketch (one shared nib). Same easing,
-     same per-stroke duration curve; pace is a multiplier.
-     flat = [{ q: { el, len }, nib: <g|null> }] in draw order. */
+  /* Map a local (design-space) point to svg user space using a glyph's
+     transform: rotate(rot) about (gcx,100), then scale(sx,sy), then
+     translate(tx,ty). getPointAtLength returns local coords, so the
+     nib (a sibling in svg space) must be transformed this way. */
+  function applyXf(pt, xf) {
+    var dx = pt.x - xf.gcx, dy = pt.y - 100;
+    var c = Math.cos(xf.rad), s = Math.sin(xf.rad);
+    var rx = dx * c - dy * s + xf.gcx;
+    var ry = dx * s + dy * c + 100;
+    return { x: rx * xf.sx + xf.tx, y: ry * xf.sy + xf.ty };
+  }
+
+  /* Shared stroke-sequence animator. Same easing + per-stroke duration
+     curve for the handwriting and the margin sketch.
+     flat = [{ q: { el, len, xf? }, nib: <g|null> }] in draw order. */
   function animateSequence(flat, pace, onDone) {
     var i = 0, segStart = null;
 
@@ -93,6 +239,7 @@
       cur.q.el.style.strokeDashoffset = cur.q.len * (1 - eased);
       if (cur.nib) {
         var pt = cur.q.el.getPointAtLength(cur.q.len * eased);
+        if (cur.q.xf) pt = applyXf(pt, cur.q.xf);
         cur.nib.setAttribute('transform', 'translate(' + pt.x + ' ' + pt.y + ')');
         cur.nib.style.opacity = 1;
       }
@@ -105,6 +252,7 @@
             // pen lift to a different nib: hide this one, seat the next
             cur.nib.style.opacity = 0;
             var sp = nx.q.el.getPointAtLength(0);
+            if (nx.q.xf) sp = applyXf(sp, nx.q.xf);
             nx.nib.setAttribute('transform', 'translate(' + sp.x + ' ' + sp.y + ')');
           }
         } else if (cur.nib) {
@@ -117,50 +265,81 @@
     requestAnimationFrame(frame);
   }
 
-  function buildLine(svg, text) {
-    var x = 4, idx = 0;
-    var strokes = [];
-    for (var c = 0; c < text.length; c++) {
-      var g = A[text[c]];
-      if (!g) continue;
-      var j = jitter(idx);
-      var tf = 'translate(' + x + ' ' + j.dy + ') rotate(' + j.rot + ' ' + (x + 30) + ' 100)';
-      g.paths.forEach(function (d) { strokes.push({ d: d, tf: tf }); });
-      x += g.adv;
-      idx++;
-    }
-    svg.setAttribute('viewBox', '0 0 ' + (x + 16) + ' 150');
-    var queue = strokes.map(function (s) {
-      var el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      el.setAttribute('d', s.d);
-      el.setAttribute('transform', s.tf);
-      el.setAttribute('fill', 'none');
-      el.setAttribute('stroke', INK);
-      el.setAttribute('stroke-width', '5.5');
-      el.setAttribute('stroke-linecap', 'round');
-      el.setAttribute('stroke-linejoin', 'round');
-      svg.appendChild(el);
-      var L = el.getTotalLength();
-      el.style.strokeDasharray = L + ' ' + L;
-      el.style.strokeDashoffset = L;
-      return { el: el, len: L };
+  /* Build the overlay SVG for one line: viewBox = the real text box
+     (1 unit = 1px), each glyph centered on its real character cell,
+     x-height matched to the font. Non-uniform scale so a wide doodle
+     glyph fits a narrow cell; non-scaling-stroke keeps pen weight even. */
+  function buildLine(line) {
+    var svg = line.querySelector('.ink-svg');
+    if (!svg) return null;
+    var m = measureLine(line);
+    if (!m) return null;
+
+    svg.setAttribute('viewBox', '0 0 ' + m.W.toFixed(1) + ' ' + m.H.toFixed(1));
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    var sy = m.xh / 36;
+    var flat = [];
+
+    m.chars.forEach(function (ch, i) {
+      if (ch.ch === ' ' || !A[ch.ch]) return;
+      var g = A[ch.ch];
+      var j = jitter(i);
+      var bb = GB[ch.ch];
+      var inkW = Math.max(1, bb.maxX - bb.minX);
+      var cellW = Math.max(4, ch.right - ch.left);
+      var sx = cellW / (inkW + 6);
+      var minSx = sy * 0.5;
+      if (sx < minSx) sx = minSx;
+      var gcx = (bb.minX + bb.maxX) / 2;
+      var cx = (ch.left + ch.right) / 2;
+      var tx = cx - sx * gcx;
+      var ty = (ch.top + m.baseOff) - sy * 100 + sy * j.dy;
+      if (!isFinite(tx) || !isFinite(ty) || !isFinite(sx) || !isFinite(sy)) return; // keep real text for this char
+      var xf = {
+        sx: sx, sy: sy, tx: tx, ty: ty, gcx: gcx,
+        rad: (j.rot * Math.PI) / 180
+      };
+      var tf = 'translate(' + tx.toFixed(2) + ' ' + ty.toFixed(2) + ') ' +
+        'scale(' + sx.toFixed(3) + ' ' + sy.toFixed(3) + ') ' +
+        'rotate(' + j.rot + ' ' + gcx.toFixed(1) + ' 100)';
+      g.paths.forEach(function (d) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        el.setAttribute('d', d);
+        el.setAttribute('transform', tf);
+        el.setAttribute('fill', 'none');
+        el.setAttribute('stroke', INK);
+        el.setAttribute('stroke-width', '2.6');
+        el.setAttribute('vector-effect', 'non-scaling-stroke');
+        el.setAttribute('stroke-linecap', 'round');
+        el.setAttribute('stroke-linejoin', 'round');
+        el.setAttribute('data-g', ch.ch);
+        svg.appendChild(el);
+        var L = el.getTotalLength();
+        el.style.strokeDasharray = L + ' ' + L;
+        el.style.strokeDashoffset = L;
+        flat.push({ q: { el: el, len: L, xf: xf }, nib: null });
+      });
     });
-    var nib = createNib(svg);
-    return { queue: queue, nib: nib };
+
+    if (!flat.length) return null;
+    var nib = createNib(svg, false);
+    flat.forEach(function (f) { f.nib = nib; });
+    return flat;
   }
 
   function drawBlock(block) {
     if (drawing[block]) return;
-    var parts = Array.prototype.map.call(block.querySelectorAll('.ink-line'), function (line) {
-      var svg = line.querySelector('.ink-svg');
-      return buildLine(svg, line.getAttribute('data-text') || '');
-    });
-
     var flat = [];
-    parts.forEach(function (p) {
-      p.queue.forEach(function (q) { flat.push({ q: q, nib: p.nib }); });
+    Array.prototype.forEach.call(block.querySelectorAll('.ink-line'), function (line) {
+      var f = buildLine(line);
+      if (f) flat = flat.concat(f);
     });
-    if (!flat.length) return;
+    if (!flat.length) {
+      // nothing drawable (or fonts unavailable) — real text stands
+      block.classList.add('ink-done');
+      return;
+    }
     drawing[block] = true;
 
     var sp0 = flat[0].q.el.getPointAtLength(0);
@@ -175,26 +354,80 @@
     });
   }
 
-  /* Public API — lets the GOAT easter egg (ui.js) re-ink a block with
-     new text without waiting for scroll. Clears existing strokes + nib
-     first, then redraws from scratch. If a draw is already in flight,
-     the redraw is queued and runs when it finishes. */
+  function init() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // CSS keeps real text
+    var blocks = Array.prototype.slice.call(document.querySelectorAll('.ink-block'));
+    if (!blocks.length) return;
+
+    function go() {
+      if (!('IntersectionObserver' in window)) {
+        blocks.forEach(function (b) {
+          b.classList.add('ink-live');
+          drawBlock(b);
+        });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            if (!e.target.classList.contains('ink-done') && !drawing[e.target]) {
+              e.target.classList.add('ink-live');
+              drawBlock(e.target);
+            }
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.45 });
+      blocks.forEach(function (b) { io.observe(b); });
+    }
+
+    // Measure real text after webfonts settle (bounded wait).
+    if (document.fonts && document.fonts.ready) {
+      Promise.race([
+        document.fonts.ready,
+        new Promise(function (r) { setTimeout(r, 2500); })
+      ]).then(go);
+    } else {
+      go();
+    }
+
+    // If the viewport width changes a lot (rotation / resize) after a
+    // block finished, re-measure so the overlay matches the new layout.
+    var lastW = window.innerWidth;
+    var rt = null;
+    window.addEventListener('resize', function () {
+      var w = window.innerWidth;
+      if (Math.abs(w - lastW) < 80) return;
+      lastW = w;
+      if (rt) clearTimeout(rt);
+      rt = setTimeout(function () {
+        blocks.forEach(function (b) {
+          if (b.classList.contains('ink-done')) window.__GM_INK.redraw(b);
+        });
+      }, 250);
+    }, { passive: true });
+  }
+
+  /* Public API. */
   window.__GM_INK = {
+    /* Re-ink a block with new text (GOAT easter egg). The real text must
+       already be updated by the caller; layout is re-measured fresh. */
     redraw: function (block) {
       if (!block) return;
       if (drawing[block]) {
         pendingRedraw[block] = true;
         return;
       }
-      var svgs = block.querySelectorAll('.ink-svg');
-      for (var s = 0; s < svgs.length; s++) svgs[s].innerHTML = '';
+      Array.prototype.forEach.call(block.querySelectorAll('.ink-svg'), function (svg) {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+      });
       block.classList.remove('ink-done');
+      if (!block.classList.contains('ink-live')) block.classList.add('ink-live');
       drawBlock(block);
     },
 
     /* Sketch-in an existing inline <svg> of hand-drawn paths (margin
-       doodles). Reuses the same stroke-reveal system: dash offset per
-       path, one shared nib, same easing. Reduced motion → fully drawn. */
+       doodles). Same stroke-reveal system. Reduced motion → drawn. */
     sketch: function (container) {
       if (!container) return;
       var svg = container.querySelector('svg');
@@ -204,7 +437,6 @@
       if (!paths.length) return;
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // static fully-drawn fallback
         paths.forEach(function (p) {
           p.style.strokeDasharray = 'none';
           p.style.strokeDashoffset = '0';
@@ -213,7 +445,7 @@
         return;
       }
 
-      var nib = createNib(svg);
+      var nib = createNib(svg, true);
       var flat = [];
       paths.forEach(function (el) {
         var L = el.getTotalLength();

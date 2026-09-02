@@ -169,15 +169,15 @@
     var block = document.querySelector('.hero .ink-block');
     if (!block) return;
     var line = block.querySelector('.ink-line');
-    var fallback = block.querySelector('.ink-fallback');
+    var real = line ? line.querySelector('.ink-real') : null;
     var toGoat = !goatOn;
     goatOn = toGoat;
     var text = toGoat ? 'goat' : 'Gracias, Argentina';
     if (line) line.setAttribute('data-text', text);
-    if (fallback) fallback.textContent = text;
+    if (real) real.textContent = text;
     block.setAttribute('aria-label', text);
     toast(toGoat ? 'Exactly.' : 'Back to the shirt.');
-    if (window.__GM_INK && block.classList.contains('ink-live')) window.__GM_INK.redraw(block);
+    if (window.__GM_INK && window.__GM_INK.redraw) window.__GM_INK.redraw(block);
   }
 
   document.addEventListener('keydown', function (e) {

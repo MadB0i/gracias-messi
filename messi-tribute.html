@@ -978,33 +978,49 @@
     }
   }
 
-  /* ── INK (real pen-stroke reveal) ── */
+  /* ── INK (real pen-stroke reveal drawn over the real text) ──
+     Layout correctness comes from the browser: .ink-real is real
+     Caveat text in normal flow. .ink-svg is an absolute overlay whose
+     viewBox is set to the line box (1 unit = 1 px); each glyph is
+     placed over its real character cell. On completion the overlay
+     fades out and the real text fades in. */
   .ink-block {
     display: block;
   }
 
+  .ink-line {
+    position: relative;
+    display: block;
+  }
+
+  .ink-real {
+    display: block;
+    font-family: 'Caveat', cursive;
+    font-weight: 500;
+    transition: opacity 0.45s ease;
+  }
+
   .ink-svg {
-    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     overflow: visible;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.45s ease;
   }
 
-  .ink-live .ink-svg {
-    display: block;
-  }
+  .ink-live .ink-svg { opacity: 1; }
+  .ink-live .ink-real { opacity: 0; }
 
-  .ink-fallback {
-    display: block;
-  }
-
-  .ink-live .ink-fallback {
-    display: none;
-  }
+  .ink-live.ink-done .ink-svg { opacity: 0; }
+  .ink-live.ink-done .ink-real { opacity: 1; }
 
   @media (prefers-reduced-motion: reduce) {
-    .ink-live .ink-svg { display: none; }
-    .ink-live .ink-fallback { display: block; }
+    .ink-svg { display: none; }
+    .ink-real { opacity: 1 !important; }
   }
 
   .ink-nib {
@@ -1012,21 +1028,17 @@
     pointer-events: none;
   }
 
-  .hero .ink-fallback {
-    font-family: 'Caveat', cursive;
+  .hero .ink-real {
     font-size: clamp(1.5rem, 4vw, 2.8rem);
     color: var(--blue-deep);
-    font-weight: 500;
     letter-spacing: 0;
     margin-top: 0.3rem;
     line-height: 1.1;
   }
 
-  .note .ink-fallback {
-    font-family: 'Caveat', cursive;
+  .note .ink-real {
     font-size: clamp(1.3rem, 3vw, 1.8rem);
     color: var(--navy);
-    font-weight: 500;
     line-height: 1.5;
   }
 
@@ -1634,11 +1646,6 @@
   .goat-toast.on {
     opacity: 1;
     transform: translate(-50%, 0);
-  }
-
-  /* Keep the hero ink line from blowing up when re-inked with short text */
-  .hero .ink-svg {
-    max-height: 140px;
   }
 
   /* ── GOOOAL button + confetti canvas ── */
@@ -2340,8 +2347,7 @@
     <h1 class="hero__title">
       Lionel Messi
       <span class="ink-block" aria-label="Gracias, Argentina">
-        <span class="ink-line" data-text="Gracias, Argentina"><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
-        <span class="ink-fallback">Gracias, Argentina</span>
+        <span class="ink-line" data-text="Gracias, Argentina"><svg class="ink-svg" aria-hidden="true" focusable="false"></svg><span class="ink-real">Gracias, Argentina</span></span>
       </span>
     </h1>
     <p class="hero__subtitle" data-i18n="hero.sub">
@@ -2809,9 +2815,8 @@
       </div>
       <div class="note__main">
         <div class="ink-block ink-note" aria-label="I gave everything for this shirt. Gracias, Argentina.">
-          <span class="ink-line" data-text="I gave everything for this shirt."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
-          <span class="ink-line" data-text="Gracias, Argentina."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
-          <span class="ink-fallback">I gave everything for this shirt.<br>Gracias, Argentina.</span>
+          <span class="ink-line" data-text="I gave everything for this shirt."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg><span class="ink-real">I gave everything for this shirt.</span></span>
+          <span class="ink-line" data-text="Gracias, Argentina."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg><span class="ink-real">Gracias, Argentina.</span></span>
         </div>
       </div>
     </div>
