@@ -423,6 +423,12 @@
     font-style: italic;
   }
 
+  .note__text--small {
+    font-size: 1.15rem;
+    opacity: 0.75;
+    margin-top: 1.2rem;
+  }
+
   /* ── STAT CARDS (downloadable) ── */
   .cards {
     padding: 5rem 1.5rem;
@@ -670,8 +676,8 @@
   /* ── RESPONSIVE ── */
   @media (min-width: 768px) {
     .stats__grid {
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem 1.5rem;
     }
 
     .note__card {
@@ -682,10 +688,6 @@
   @media (max-width: 480px) {
     .stats__grid {
       grid-template-columns: repeat(2, 1fr);
-    }
-
-    .stat:nth-child(5) {
-      grid-column: 1 / -1;
     }
 
     .timeline__track {
@@ -928,6 +930,444 @@
     }
   }
 
+  /* ── INK (real pen-stroke reveal) ── */
+  .ink-block {
+    display: block;
+  }
+
+  .ink-svg {
+    display: none;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .ink-live .ink-svg {
+    display: block;
+  }
+
+  .ink-fallback {
+    display: block;
+  }
+
+  .ink-live .ink-fallback {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ink-live .ink-svg { display: none; }
+    .ink-live .ink-fallback { display: block; }
+  }
+
+  .ink-nib {
+    transition: opacity 0.35s;
+    pointer-events: none;
+  }
+
+  .hero .ink-fallback {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
+    color: var(--blue-deep);
+    font-weight: 500;
+    letter-spacing: 0;
+    margin-top: 0.3rem;
+    line-height: 1.1;
+  }
+
+  .note .ink-fallback {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    color: var(--navy);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* ── GOALS HEATMAP ── */
+  .heat-section {
+    padding: 5rem 1.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .heat__heading {
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem;
+    color: var(--blue-deep);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .heat__sub {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--ink);
+    opacity: 0.45;
+    margin-bottom: 2rem;
+  }
+
+  .heat-scroll {
+    overflow-x: auto;
+    padding: 1rem 0.25rem 0.5rem;
+  }
+
+  .heat {
+    position: relative;
+    display: inline-block;
+    min-width: 330px;
+  }
+
+  .heat-grid {
+    display: grid;
+    grid-template-columns: 56px repeat(12, 16px);
+    grid-auto-rows: 16px;
+    gap: 3px;
+  }
+
+  .heat-cell {
+    border-radius: 2px;
+  }
+
+  .heat-month {
+    font-size: 9px;
+    color: var(--ink);
+    opacity: 0.5;
+    white-space: nowrap;
+    line-height: 1;
+    align-self: center;
+  }
+
+  .heat-rowlab {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    color: var(--navy);
+    opacity: 0.55;
+    text-align: right;
+    align-self: center;
+    padding-right: 6px;
+  }
+
+  .heat-tip {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+    background: var(--navy);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.45;
+    padding: 6px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .heat-tip.on {
+    opacity: 1;
+  }
+
+  .heat-legend {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--ink);
+    opacity: 0.55;
+  }
+
+  .heat-legend i {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .heat__caption {
+    font-size: 0.8rem;
+    color: var(--ink);
+    opacity: 0.5;
+    margin-top: 1rem;
+    line-height: 1.55;
+    max-width: 560px;
+  }
+
+  /* ── WRITE YOUR OWN NOTE ── */
+  .ownnote {
+    padding: 5rem 1.5rem;
+    max-width: 740px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .ownnote__heading {
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem;
+    color: var(--blue-deep);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .ownnote__sub {
+    font-size: 0.9rem;
+    color: var(--ink);
+    opacity: 0.45;
+    margin-bottom: 2rem;
+  }
+
+  .ownnote__page {
+    text-align: left;
+    border: 1px solid var(--paper-line);
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .ownnote__paper {
+    display: block;
+    width: 100%;
+    min-height: 190px;
+    border: 0;
+    resize: vertical;
+    background: transparent;
+    font-family: 'Caveat', cursive;
+    font-size: 1.45rem;
+    line-height: 2.2rem;
+    color: var(--navy);
+    padding: 1rem 1rem 1rem 4.6rem;
+    outline: none;
+    background-image:
+      repeating-linear-gradient(
+        transparent,
+        transparent calc(2.2rem - 1px),
+        var(--paper-line) calc(2.2rem - 1px),
+        var(--paper-line) 2.2rem
+      ),
+      linear-gradient(
+        90deg,
+        transparent calc(4.2rem - 1px),
+        var(--margin-line) calc(4.2rem - 1px),
+        var(--margin-line) 4.2rem,
+        transparent 4.2rem
+      );
+    background-position: 0 0.35rem, 0 0;
+  }
+
+  .ownnote__paper::placeholder {
+    color: var(--ink);
+    opacity: 0.3;
+  }
+
+  .ownnote__bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.7rem 1rem;
+    border-top: 1px solid var(--paper-line);
+  }
+
+  .ownnote__count {
+    font-size: 0.75rem;
+    color: var(--ink);
+    opacity: 0.45;
+  }
+
+  .ownnote__btns button {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: var(--navy);
+    color: var(--cream);
+    border: 0;
+    padding: 0.55rem 0.95rem;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  .ownnote__btns button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .ownnote__fine {
+    font-size: 0.8rem;
+    color: var(--ink);
+    opacity: 0.5;
+    margin-top: 1.1rem;
+  }
+
+  .star-cta {
+    max-width: 440px;
+    margin: 2.2rem auto 0;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid var(--gold);
+    background: rgba(197, 165, 90, 0.06);
+    display: none;
+  }
+
+  .star-cta.on {
+    display: block;
+  }
+
+  .star-cta a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    color: var(--navy);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+
+  .star-cta span {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--ink);
+    opacity: 0.55;
+    margin-top: 0.3rem;
+  }
+
+  /* ── COMMAND PALETTE ── */
+  .cmdk {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+  }
+
+  .cmdk-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 39, 68, 0.28);
+  }
+
+  .cmdk-panel {
+    position: absolute;
+    top: 14vh;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    width: min(560px, calc(100vw - 2rem));
+    background: var(--cream);
+    border: 1px solid rgba(26, 39, 68, 0.18);
+    box-shadow: 0 18px 50px rgba(26, 39, 68, 0.25);
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+
+  .cmdk.on .cmdk-panel {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .cmdk-input {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 1.05rem;
+    padding: 1rem 1.1rem 0.7rem;
+    color: var(--navy);
+    outline: none;
+    border-bottom: 1px solid var(--paper-line);
+  }
+
+  .cmdk-list {
+    list-style: none;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 0.4rem 0;
+  }
+
+  .cmdk-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    font-size: 0.92rem;
+    color: var(--ink);
+  }
+
+  .cmdk-item.sel {
+    background: rgba(117, 170, 219, 0.18);
+  }
+
+  .cmdk-s {
+    font-size: 0.75rem;
+    opacity: 0.5;
+    white-space: nowrap;
+  }
+
+  .cmdk-empty {
+    padding: 1rem 1.1rem;
+    font-size: 0.9rem;
+    opacity: 0.5;
+  }
+
+  .cmdk-foot {
+    padding: 0.55rem 1.1rem;
+    border-top: 1px solid var(--paper-line);
+    font-size: 0.72rem;
+    color: var(--ink);
+    opacity: 0.5;
+  }
+
+  .cmdk-foot span {
+    font-weight: 600;
+    opacity: 0.8;
+  }
+
+  .cmd-flash {
+    animation: cmdflash 1.2s ease-out;
+  }
+
+  @keyframes cmdflash {
+    0%, 55% { outline: 3px solid var(--gold); outline-offset: 6px; }
+    100% { outline: 3px solid transparent; outline-offset: 6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cmdk-panel { transition: none; }
+    .cmd-flash {
+      animation: none;
+      outline: 3px solid var(--gold);
+      outline-offset: 6px;
+    }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .gallery__caption {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--ink);
+    opacity: 0.45;
+    margin-top: 1.1rem;
+  }
+
+  .footer__hint {
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--ink);
+    opacity: 0.4;
+  }
+
+  .footer__hint kbd {
+    font-family: inherit;
+    border: 1px solid rgba(26, 39, 68, 0.25);
+    padding: 0 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
   /* Print / high-contrast */
   @media print {
     body { background: white; }
@@ -945,7 +1385,10 @@
     <p class="hero__date">August 31, 2026</p>
     <h1 class="hero__title">
       Lionel Messi
-      <span>Gracias, Argentina</span>
+      <span class="ink-block" aria-label="Gracias, Argentina">
+        <span class="ink-line" data-text="Gracias, Argentina"><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
+        <span class="ink-fallback">Gracias, Argentina</span>
+      </span>
     </h1>
     <p class="hero__subtitle">
       193 caps. 125 goals. A handwritten note on notebook paper,
@@ -956,39 +1399,44 @@
 </section>
 
 <!-- ═══ STATS ═══ -->
-<section class="stats" aria-label="Career numbers">
+<section class="stats" aria-label="Career numbers" data-cmd="Career numbers" data-cmd-sub="goals, assists, trophies, Ballons d'Or">
   <p class="stats__label">The numbers that define an era</p>
   <div class="stats__grid">
-    <div class="stat">
+    <div class="stat" data-cmd="927 career goals" data-cmd-sub="802 club · 125 international">
       <div class="stat__number" data-target="927" data-suffix="">0</div>
       <div class="stat__desc">Goals</div>
       <div class="stat__sub">802 club · 125 international</div>
     </div>
-    <div class="stat">
+    <div class="stat" data-cmd="460 career assists" data-cmd-sub="all competitions">
       <div class="stat__number" data-target="460" data-suffix="">0</div>
       <div class="stat__desc">Assists</div>
       <div class="stat__sub">Career total</div>
     </div>
-    <div class="stat">
+    <div class="stat" data-cmd="47 trophies" data-cmd-sub="across four teams">
       <div class="stat__number" data-target="47" data-suffix="">0</div>
       <div class="stat__desc">Trophies</div>
       <div class="stat__sub">Across four teams</div>
     </div>
-    <div class="stat">
+    <div class="stat" data-cmd="8 Ballons d'Or" data-cmd-sub="all-time record">
       <div class="stat__number" data-target="8" data-suffix="">0</div>
       <div class="stat__desc">Ballons d'Or</div>
       <div class="stat__sub">All-time record</div>
     </div>
-    <div class="stat">
+    <div class="stat" data-cmd="125 Argentina goals" data-cmd-sub="193 caps · national record">
       <div class="stat__number" data-target="125" data-suffix="">0</div>
       <div class="stat__desc">Argentina Goals</div>
       <div class="stat__sub">193 caps · national record</div>
+    </div>
+    <div class="stat" id="starStat" data-cmd="Starred on GitHub" data-cmd-sub="live count from the repo">
+      <div class="stat__number" id="starCount">—</div>
+      <div class="stat__desc">Starred on GitHub</div>
+      <div class="stat__sub">fans who starred this tribute</div>
     </div>
   </div>
 </section>
 
 <!-- ═══ GOALS CHART ═══ -->
-<section class="chart-section" aria-label="Goals per season">
+<section class="chart-section" aria-label="Goals per season" data-cmd="Goals by season" data-cmd-sub="22 seasons, 2004–2026">
   <h2 class="chart__heading">Goals by season</h2>
   <p class="chart__sub">Every season, every club. Hover for details.</p>
   <div class="chart" id="goalsChart"></div>
@@ -1002,15 +1450,25 @@
   </div>
 </section>
 
+<!-- ═══ GOALS HEATMAP ═══ -->
+<section class="heat-section" aria-label="Goals calendar heatmap" data-cmd="Goals heatmap" data-cmd-sub="season density, calendar style">
+  <h2 class="heat__heading">The rhythm, season by season</h2>
+  <p class="heat__sub">Twenty-two seasons on a contributions-style calendar — the density of a career at a glance.</p>
+  <div class="heat-scroll">
+    <div id="goalsHeatmap" class="heat" role="img" aria-label="Calendar heatmap of Lionel Messi's goals per season, 2004 to 2026"></div>
+  </div>
+  <p class="heat__caption">Month-level goal records aren't in the public record, so each row distributes that season's verified total across its twelve months — read the grid for rhythm, not individual dates.</p>
+</section>
+
 <!-- ═══ SHAREABLE STAT CARDS ═══ -->
-<section class="cards" aria-label="Shareable stat cards">
+<section class="cards" aria-label="Shareable stat cards" data-cmd="Share a stat" data-cmd-sub="downloadable PNG stat cards">
   <h2 class="cards__heading">Share a stat</h2>
   <p class="cards__sub">Click any card to download a shareable image</p>
   <div class="cards__grid" id="statCards"></div>
 </section>
 
 <!-- ═══ IMAGE GALLERY ═══ -->
-<section class="gallery" aria-label="Historic moments">
+<section class="gallery" aria-label="Historic moments" data-cmd="Historic moments" data-cmd-sub="3D photo gallery">
   <h2 class="gallery__heading">Moments that defined an era</h2>
   <p class="gallery__sub">Hover to explore</p>
   <div class="gallery__grid">
@@ -1082,59 +1540,60 @@
     </div>
 
   </div>
+  <p class="gallery__caption">Illustrative photography — these images stand in for the moments; they are not historical photographs of the events shown.</p>
 </section>
 
 <!-- ═══ TIMELINE ═══ -->
-<section class="timeline" aria-label="Career timeline">
+<section class="timeline" aria-label="Career timeline" data-cmd="Timeline" data-cmd-sub="career milestones 2004–2026">
   <h2 class="timeline__heading">A life in the game</h2>
   <div class="timeline__track">
 
-    <div class="timeline__item">
+    <div class="timeline__item" data-cmd="2004 — Senior Barcelona debut" data-cmd-sub="age 17, Camp Nou">
       <div class="timeline__year">2004</div>
       <p class="timeline__text">Senior debut for Barcelona at age 17. A boy from Rosario takes the pitch at Camp Nou.</p>
     </div>
 
-    <div class="timeline__item">
+    <div class="timeline__item" data-cmd="2005 — First Argentina goal" data-cmd-sub="senior debut goal">
       <div class="timeline__year">2005</div>
       <p class="timeline__text">First goal for the Argentina senior team. The national side gains a player who will redefine it.</p>
     </div>
 
-    <div class="timeline__item timeline__item--milestone">
+    <div class="timeline__item timeline__item--milestone" data-cmd="2009 — First Ballon d'Or" data-cmd-sub="the first of eight">
       <div class="timeline__year">2009</div>
       <p class="timeline__text">Wins his first Ballon d'Or. The first of eight — more than any player in history.</p>
     </div>
 
-    <div class="timeline__item timeline__item--milestone">
+    <div class="timeline__item timeline__item--milestone" data-cmd="2014 — World Cup final" data-cmd-sub="runner-up, lost to Germany">
       <div class="timeline__year">2014</div>
       <p class="timeline__text">Leads Argentina to the World Cup final in Brazil. Falls short against Germany in extra time.</p>
     </div>
 
-    <div class="timeline__item">
+    <div class="timeline__item" data-cmd="2016 — Retirement announcement" data-cmd-sub="then reversed months later">
       <div class="timeline__year">2016</div>
       <p class="timeline__text">Announces international retirement after a Copa América final defeat. Reverses his decision months later — driven by unfinished business.</p>
     </div>
 
-    <div class="timeline__item timeline__item--milestone">
+    <div class="timeline__item timeline__item--milestone" data-cmd="2021 — Copa América champion" data-cmd-sub="ends 28-year drought, leaves Barcelona">
       <div class="timeline__year">2021</div>
       <p class="timeline__text">Wins Copa América, ending Argentina's 28-year major trophy drought. The same summer, he leaves Barcelona after 21 years.</p>
     </div>
 
-    <div class="timeline__item timeline__item--milestone">
+    <div class="timeline__item timeline__item--milestone" data-cmd="2022 — World Cup champion" data-cmd-sub="Qatar, the bisht">
       <div class="timeline__year">2022</div>
       <p class="timeline__text">World Cup champion in Qatar. The defining image: Messi lifting the golden trophy in a bisht.</p>
     </div>
 
-    <div class="timeline__item">
+    <div class="timeline__item" data-cmd="2023 — Joins Inter Miami" data-cmd-sub="wins Leagues Cup weeks later">
       <div class="timeline__year">2023</div>
       <p class="timeline__text">Joins Inter Miami. Wins the Leagues Cup within weeks of arriving in the United States.</p>
     </div>
 
-    <div class="timeline__item timeline__item--milestone">
+    <div class="timeline__item timeline__item--milestone" data-cmd="2024 — Back-to-back Copa América" data-cmd-sub="the dynasty">
       <div class="timeline__year">2024</div>
       <p class="timeline__text">Back-to-back Copa América champion. Argentina's dynasty is undeniable.</p>
     </div>
 
-    <div class="timeline__item timeline__item--milestone">
+    <div class="timeline__item timeline__item--milestone" data-cmd="2026 — International retirement" data-cmd-sub="handwritten Instagram post, Aug 31">
       <div class="timeline__year">2026</div>
       <p class="timeline__text">World Cup runner-up — a final loss to Spain. On August 31, posts a handwritten note to Instagram. The international chapter closes.</p>
     </div>
@@ -1143,10 +1602,10 @@
 </section>
 
 <!-- ═══ BIO ═══ -->
-<section class="bio" aria-label="Biography">
+<section class="bio" aria-label="Biography" data-cmd="The full story" data-cmd-sub="5-chapter biography">
   <h2 class="bio__title">The full story</h2>
 
-  <article class="bio__chapter">
+  <article class="bio__chapter" data-cmd="Chapter I — Rosario" data-cmd-sub="childhood, Newell's, the Machine of '87">
     <div class="bio__chapter-num">I</div>
     <h3 class="bio__chapter-title">Rosario</h3>
     <p class="bio__text">
@@ -1156,7 +1615,7 @@
       Messi's older brothers, Rodrigo and Matías, played regularly, as did his cousins Maximiliano and Emanuel Biancucchi, both of whom would eventually become professional footballers. Leo, the youngest of the active players, grew up chasing their touches in the narrow streets of Las Heras. By the time he was three, he had a ball at his feet constantly. At four, he joined Grandoli, a local club coached by his father. By five, he was already playing in organised matches against children a full year older.
     </p>
     <p class="bio__text">
-      In 1995, at age seven, Messi joined Newell's Old Boys, one of Rosario's two major clubs and the team his family had supported for generations. He was placed in a youth cohort born in 1987 that would become legendary within the club: "La Máquina del '87" — the Machine of '87. Over six years at Newell's, Messi scored nearly 500 goals across all age groups, an almost incomprehensible tally for a child who was consistently the smallest player on every pitch. During half-time of first-team matches, he would entertain the crowd by performing ball tricks, juggling with a fluency that made the adults stop and watch. His idol was the Brazilian striker Ronaldo, whom Messi later called "the best forward I've ever seen."
+      In 1995, at age seven, Messi joined Newell's Old Boys, one of Rosario's two major clubs and the team his family had supported for generations. He was placed in a youth cohort born in 1987 that would become legendary within the club: "La Máquina del '87" — the Machine of '87. Over six years at Newell's, Messi scored nearly 500 goals across all age groups, an almost incomprehensible tally for a child who was consistently the smallest player on every pitch. During half-time of first-team matches, he would entertain the crowd by performing ball tricks, juggling with a fluency that made the adults stop and watch. His idol was the Brazilian striker Ronaldo — the player he grew up watching and, in his own account, the best forward he had ever seen.
     </p>
     <p class="bio__pull">
       By the time he was seven, he was already playing against children a full year older — and winning.
@@ -1165,7 +1624,7 @@
 
   <div class="bio__divider"></div>
 
-  <article class="bio__chapter">
+  <article class="bio__chapter" data-cmd="Chapter II — The Diagnosis" data-cmd-sub="growth hormone, Newell's, River Plate">
     <div class="bio__chapter-num">II</div>
     <h3 class="bio__chapter-title">The Diagnosis</h3>
     <p class="bio__text">
@@ -1184,29 +1643,29 @@
 
   <div class="bio__divider"></div>
 
-  <article class="bio__chapter">
+  <article class="bio__chapter" data-cmd="Chapter III — The Napkin" data-cmd-sub="the famous napkin contract, 2000">
     <div class="bio__chapter-num">III</div>
     <h3 class="bio__chapter-title">The Napkin</h3>
     <p class="bio__text">
-      In September 2000, the Messi family arranged a two-week trial with FC Barcelona. Lionel, now 13, flew for only the second time in his life. The 13-hour flight was turbulent; he could not sleep and felt too sick to eat. When he arrived at El Prat airport, Horacio Gaggioli — the agent facilitating the trial — was waiting. He had seen video footage of Messi's skills at Newell's, but what he saw stepping off the plane gave him pause. "He was exceptionally small," Gaggioli later said. "His leg looked like a finger. I thought there was no way he could play football."
+      In September 2000, the Messi family arranged a two-week trial with FC Barcelona. Lionel, now 13, flew for only the second time in his life. The 13-hour flight was turbulent; he could not sleep and felt too sick to eat. When he arrived at El Prat airport, Horacio Gaggioli — the agent facilitating the trial — was waiting. He had seen video footage of Messi's skills at Newell's, but what he saw stepping off the plane gave him pause: Gaggioli has since described the boy as exceptionally small, and doubted for a moment he could play football at all.
     </p>
     <p class="bio__text">
-      That same day, despite his exhaustion, Messi trained with Barcelona's youth team. The reaction in the dressing room was disbelief. "We all wondered how this kid could possibly hold his own," Cesc Fàbregas recalled. "He was very, very small. He was also extremely shy — he didn't say a word." Gerard Piqué, who was over a foot taller, was blunt: "I guess we'd written this kid off before he'd kicked a ball." Then he kicked one. "The doubts were gone."
+      That same day, despite his exhaustion, Messi trained with Barcelona's youth team. The reaction in the dressing room was disbelief — Cesc Fàbregas has recalled that the group wondered how such a small, silent boy could hold his own, since Leo barely spoke at first. Gerard Piqué, over a foot taller, has said the room had written the kid off before he touched the ball. Then he touched it, and the doubts were gone.
     </p>
     <p class="bio__text">
-      Carles Rexach, Barcelona's technical director, was initially in Sydney watching the Olympics but arranged to evaluate Messi upon his return. "After two minutes, I had seen enough," Rexach said. "I said, 'We have to sign this kid right now.'" But the Barcelona board was unconvinced. They questioned whether such a shy child — teammates called him "El Mudo," The Mute — could adapt to a foreign country. They worried about the cost of his growth hormone therapy. Weeks passed. The Messi family grew restless.
+      Carles Rexach, Barcelona's technical director, was initially in Sydney watching the Olympics but arranged to evaluate Messi upon his return. He has said he saw enough in two minutes and told the board the club had to sign the boy immediately. But the Barcelona board was unconvinced. They questioned whether such a shy child — teammates called him "El Mudo," The Mute — could adapt to a foreign country. They worried about the cost of his growth hormone therapy. Weeks passed. The Messi family grew restless.
     </p>
     <p class="bio__text">
-      On December 14, 2000, Rexach met Gaggioli and fellow agent Josep Maria Minguella for lunch at the Pompeia Tennis Club. "We'll take him elsewhere," Gaggioli warned. "Jorge has even mentioned Madrid." Rexach panicked. With no contract paper at hand, he grabbed a paper napkin from the table and a pen from a waiter. He scribbled in blue ballpoint: <em>"In Barcelona, on Dec. 14, 2000, in the presence of Minguella and Horacio, Carles Rexach, FC Barcelona's sporting director, hereby agrees, under his responsibility and regardless of any dissenting opinions, to sign the player Lionel Messi provided that we keep to the amounts agreed upon."</em> It was signed by Rexach, Gaggioli, and Minguella. The most consequential contract in football history was written on a cafeteria napkin. It was later auctioned for nearly $1 million.
+      On December 14, 2000, Rexach met Gaggioli and fellow agent Josep Maria Minguella for lunch at the Pompeia Tennis Club. Gaggioli warned he would take the boy elsewhere — the family, he said, had even started to consider Madrid. Rexach panicked. With no contract paper at hand, he grabbed a paper napkin from the table and a pen from a waiter. He scribbled, in blue ballpoint, an agreement taking full personal responsibility for signing Lionel Messi. It was signed by Rexach, Gaggioli, and Minguella. The most consequential contract in football history was written on a cafeteria napkin. It was later auctioned for nearly $1 million.
     </p>
     <div class="bio__pull">
-      "After two minutes, I had seen enough. I said, 'We have to sign this kid right now.'"
+      In two minutes, Rexach had seen enough — the board had to sign the boy, he told them.
     </div>
   </article>
 
   <div class="bio__divider"></div>
 
-  <article class="bio__chapter">
+  <article class="bio__chapter" data-cmd="Chapter IV — The Prodigy" data-cmd-sub="La Masia, first team debut 2004">
     <div class="bio__chapter-num">IV</div>
     <h3 class="bio__chapter-title">The Prodigy</h3>
     <p class="bio__text">
@@ -1225,11 +1684,11 @@
 
   <div class="bio__divider"></div>
 
-  <article class="bio__chapter">
+  <article class="bio__chapter" data-cmd="Chapter V — The Captain" data-cmd-sub="2014 to 2026, the redemption arc">
     <div class="bio__chapter-num">V</div>
     <h3 class="bio__chapter-title">The Captain</h3>
     <p class="bio__text">
-      The arc from prodigy to leader is the arc of Messi's entire career, and it was never guaranteed. For years, he was accused of not caring enough about Argentina — of being a Barcelona player who happened to wear the blue and white, rather than an Argentine who happened to play for Barcelona. The criticism stung because it contained a grain of truth: the weight of a nation's expectations sat differently on his shoulders than it had on Diego Maradona's. In 2014, he carried Argentina to the World Cup final in Brazil, only to lose to Germany in extra time. In 2016, after a Copa América final defeat to Chile, he announced his international retirement. "For me, the national team is over," he said. He was 29.
+      The arc from prodigy to leader is the arc of Messi's entire career, and it was never guaranteed. For years, he was accused of not caring enough about Argentina — of being a Barcelona player who happened to wear the blue and white, rather than an Argentine who happened to play for Barcelona. The criticism stung because it contained a grain of truth: the weight of a nation's expectations sat differently on his shoulders than it had on Diego Maradona's. In 2014, he carried Argentina to the World Cup final in Brazil, only to lose to Germany in extra time. In 2016, after a Copa América final defeat to Chile, he announced his international retirement — the national team, he said, was over for him. He was 29.
     </p>
     <p class="bio__text">
       He reversed the decision months later, driven by something he could not articulate — an unfinished feeling, a debt owed to the shirt. What followed was the most remarkable phase of his career. In 2021, he captained Argentina to Copa América glory, ending a 28-year major trophy drought for the national team. In Qatar in 2022, he finally won the World Cup, lifting the golden trophy in a black bisht as millions watched from Buenos Aires to Barcelona. In 2024, he led Argentina to back-to-back Copa América titles, cementing a dynasty that will outlive his playing days.
@@ -1244,10 +1703,10 @@
 </section>
 
 <!-- ═══ TROPHY CASE ═══ -->
-<section class="trophies" aria-label="Trophy case">
+<section class="trophies" aria-label="Trophy case" data-cmd="Trophy case" data-cmd-sub="47 trophies across four teams">
   <h2 class="trophies__heading">47 trophies, four clubs</h2>
 
-  <div class="trophies__group">
+  <div class="trophies__group" data-cmd="Barcelona — 35 trophies" data-cmd-sub="La Liga, Champions League, Copa del Rey">
     <div class="trophies__club">
       <span class="trophies__count">35</span>
       FC Barcelona
@@ -1262,7 +1721,7 @@
     </ul>
   </div>
 
-  <div class="trophies__group">
+  <div class="trophies__group" data-cmd="Argentina — 6 trophies" data-cmd-sub="World Cup, Copa América">
     <div class="trophies__club">
       <span class="trophies__count">6</span>
       Argentina
@@ -1276,7 +1735,7 @@
     </ul>
   </div>
 
-  <div class="trophies__group">
+  <div class="trophies__group" data-cmd="PSG — 3 trophies" data-cmd-sub="Ligue 1, Trophée des Champions">
     <div class="trophies__club">
       <span class="trophies__count">3</span>
       Paris Saint-Germain
@@ -1287,7 +1746,7 @@
     </ul>
   </div>
 
-  <div class="trophies__group">
+  <div class="trophies__group" data-cmd="Inter Miami — 3 trophies" data-cmd-sub="Leagues Cup, Supporters' Shield, MLS Cup">
     <div class="trophies__club">
       <span class="trophies__count">3</span>
       Inter Miami
@@ -1301,15 +1760,41 @@
 </section>
 
 <!-- ═══ NOTE ═══ -->
-<section class="note" aria-label="Retirement note">
+<section class="note" aria-label="Retirement note" data-cmd="The retirement note" data-cmd-sub="paraphrased, written in ink">
   <div class="note__card">
-    <p class="note__text">
-      I gave everything for this shirt. The truth is that this is not the farewell I imagined.
-      But I'm grateful — for every match, every goal, every moment in blue and white.
+    <div class="ink-block ink-note" aria-label="I gave everything for this shirt. Gracias, Argentina.">
+      <span class="ink-line" data-text="I gave everything for this shirt."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
+      <span class="ink-line" data-text="Gracias, Argentina."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
+      <span class="ink-fallback">I gave everything for this shirt.<br>Gracias, Argentina.</span>
+    </div>
+    <p class="note__text note__text--small">
+      The rest of the page was a long, quiet thank-you — for every match, every goal, every moment in blue and white.
     </p>
     <p class="note__context">
       Paraphrased from his handwritten Instagram post, August 31, 2026
     </p>
+  </div>
+</section>
+
+<!-- ═══ WRITE YOUR OWN NOTE ═══ -->
+<section class="ownnote" id="noteTool" aria-label="Write your own note" data-cmd="Write your own note" data-cmd-sub="type a message, download as image">
+  <h2 class="ownnote__heading">Write your own note</h2>
+  <p class="ownnote__sub">The page he wrote his last note on. Add yours — it stays on your device.</p>
+  <div class="ownnote__page">
+    <label class="sr-only" for="noteText">Your note to Leo</label>
+    <textarea id="noteText" class="ownnote__paper" rows="6" placeholder="Gracias, Leo…" spellcheck="false"></textarea>
+    <div class="ownnote__bar">
+      <span id="noteCount" class="ownnote__count">0 / 220</span>
+      <div class="ownnote__btns">
+        <button id="dlIg" type="button">Download · Instagram 1080×1350</button>
+        <button id="dlTw" type="button">Download · Twitter 1200×675</button>
+      </div>
+    </div>
+  </div>
+  <p class="ownnote__fine">Your words, your note — not Messi's. The downloaded image says so too.</p>
+  <div class="star-cta">
+    <a href="https://github.com/MadB0i/gracias-messi" target="_blank" rel="noopener">★ Star this on GitHub</a>
+    <span>You made a note of him — make it easy to find again.</span>
   </div>
 </section>
 
@@ -1321,6 +1806,7 @@
     <br>
     The international story is complete. The game goes on.
   </p>
+  <p class="footer__hint">press <kbd>/</kbd> to search anything on this page</p>
 </footer>
 
 <script>
@@ -1393,6 +1879,11 @@
     { year: '24/25', goals: 18, club: 'Inter Miami', note: '18 goals — continued MLS production at 37' },
     { year: '25/26', goals: 12, club: 'Inter Miami', note: '12 goals (partial). World Cup runner-up. International retirement' }
   ];
+
+  // Expose to heatmap.js (normalized: season, club, goals)
+  window.__GM_SEASONS = seasons.map(function(s) {
+    return { season: s.year, club: s.club, goals: s.goals };
+  });
 
   var chartEl = document.getElementById('goalsChart');
   var maxGoals = Math.max.apply(null, seasons.map(function(s) { return s.goals; }));
@@ -1604,5 +2095,11 @@
   }
 })();
 </script>
+
+<script src="ink.js" defer></script>
+<script src="heatmap.js" defer></script>
+<script src="note.js" defer></script>
+<script src="stars.js" defer></script>
+<script src="palette.js" defer></script>
 </body>
 </html>
