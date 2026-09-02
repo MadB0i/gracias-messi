@@ -64,6 +64,59 @@
     };
   }
 
+  function createNib(svg) {
+    var nib = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    nib.setAttribute('class', 'ink-nib');
+    nib.style.opacity = 0;
+    nib.innerHTML = '<circle r="9" fill="' + INK + '" opacity="0.12"></circle><circle r="3.2" fill="' + INK + '"></circle>';
+    svg.appendChild(nib);
+    return nib;
+  }
+
+  /* Shared stroke-sequence animator. Used by the handwriting (one nib
+     per line) and the margin sketch (one shared nib). Same easing,
+     same per-stroke duration curve; pace is a multiplier.
+     flat = [{ q: { el, len }, nib: <g|null> }] in draw order. */
+  function animateSequence(flat, pace, onDone) {
+    var i = 0, segStart = null;
+
+    function frame(now) {
+      if (i >= flat.length) {
+        if (onDone) onDone();
+        return;
+      }
+      var cur = flat[i];
+      if (segStart === null) segStart = now;
+      var dur = Math.max(70, Math.min(850, cur.q.len * 0.028)) * (pace || 1);
+      var k = Math.min(1, (now - segStart) / dur);
+      var eased = k * k * (3 - 2 * k);
+      cur.q.el.style.strokeDashoffset = cur.q.len * (1 - eased);
+      if (cur.nib) {
+        var pt = cur.q.el.getPointAtLength(cur.q.len * eased);
+        cur.nib.setAttribute('transform', 'translate(' + pt.x + ' ' + pt.y + ')');
+        cur.nib.style.opacity = 1;
+      }
+      if (k >= 1) {
+        i++;
+        segStart = null;
+        if (i < flat.length) {
+          var nx = flat[i];
+          if (cur.nib && nx.nib && nx.nib !== cur.nib) {
+            // pen lift to a different nib: hide this one, seat the next
+            cur.nib.style.opacity = 0;
+            var sp = nx.q.el.getPointAtLength(0);
+            nx.nib.setAttribute('transform', 'translate(' + sp.x + ' ' + sp.y + ')');
+          }
+        } else if (cur.nib) {
+          cur.nib.style.opacity = 0;
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
   function buildLine(svg, text) {
     var x = 4, idx = 0;
     var strokes = [];
@@ -92,11 +145,7 @@
       el.style.strokeDashoffset = L;
       return { el: el, len: L };
     });
-    var nib = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    nib.setAttribute('class', 'ink-nib');
-    nib.style.opacity = 0;
-    nib.innerHTML = '<circle r="9" fill="' + INK + '" opacity="0.12"></circle><circle r="3.2" fill="' + INK + '"></circle>';
-    svg.appendChild(nib);
+    var nib = createNib(svg);
     return { queue: queue, nib: nib };
   }
 
@@ -109,49 +158,21 @@
 
     var flat = [];
     parts.forEach(function (p) {
-      p.queue.forEach(function (q) { flat.push({ q: q, part: p }); });
+      p.queue.forEach(function (q) { flat.push({ q: q, nib: p.nib }); });
     });
     if (!flat.length) return;
     drawing[block] = true;
 
-    var i = 0, segStart = null;
-
-    function frame(now) {
-      if (i >= flat.length) {
-        drawing[block] = false;
-        parts.forEach(function (p) { p.nib.style.opacity = 0; });
-        block.classList.add('ink-done');
-        if (pendingRedraw[block]) {
-          pendingRedraw[block] = false;
-          window.__GM_INK.redraw(block);
-        }
-        return;
-      }
-      var cur = flat[i];
-      if (segStart === null) segStart = now;
-      var dur = Math.max(70, Math.min(850, cur.q.len * 0.028));
-      var k = Math.min(1, (now - segStart) / dur);
-      var eased = k * k * (3 - 2 * k);
-      cur.q.el.style.strokeDashoffset = cur.q.len * (1 - eased);
-      var pt = cur.q.el.getPointAtLength(cur.q.len * eased);
-      cur.part.nib.setAttribute('transform', 'translate(' + pt.x + ' ' + pt.y + ')');
-      cur.part.nib.style.opacity = 1;
-      if (k >= 1) {
-        i++;
-        segStart = null;
-        if (i < flat.length && flat[i].part !== cur.part) {
-          // pen lift to the next line: hide this nib, seat the next one at its start
-          cur.part.nib.style.opacity = 0;
-          var sp = flat[i].q.el.getPointAtLength(0);
-          flat[i].part.nib.setAttribute('transform', 'translate(' + sp.x + ' ' + sp.y + ')');
-        }
-      }
-      requestAnimationFrame(frame);
-    }
-
     var sp0 = flat[0].q.el.getPointAtLength(0);
-    flat[0].part.nib.setAttribute('transform', 'translate(' + sp0.x + ' ' + sp0.y + ')');
-    requestAnimationFrame(frame);
+    flat[0].nib.setAttribute('transform', 'translate(' + sp0.x + ' ' + sp0.y + ')');
+    animateSequence(flat, 1, function () {
+      drawing[block] = false;
+      block.classList.add('ink-done');
+      if (pendingRedraw[block]) {
+        pendingRedraw[block] = false;
+        window.__GM_INK.redraw(block);
+      }
+    });
   }
 
   /* Public API — lets the GOAT easter egg (ui.js) re-ink a block with
@@ -169,6 +190,42 @@
       for (var s = 0; s < svgs.length; s++) svgs[s].innerHTML = '';
       block.classList.remove('ink-done');
       drawBlock(block);
+    },
+
+    /* Sketch-in an existing inline <svg> of hand-drawn paths (margin
+       doodles). Reuses the same stroke-reveal system: dash offset per
+       path, one shared nib, same easing. Reduced motion → fully drawn. */
+    sketch: function (container) {
+      if (!container) return;
+      var svg = container.querySelector('svg');
+      if (!svg || container.__gmSketched) return;
+      container.__gmSketched = true;
+      var paths = Array.prototype.slice.call(svg.querySelectorAll('path'));
+      if (!paths.length) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // static fully-drawn fallback
+        paths.forEach(function (p) {
+          p.style.strokeDasharray = 'none';
+          p.style.strokeDashoffset = '0';
+        });
+        container.classList.add('sketch-done');
+        return;
+      }
+
+      var nib = createNib(svg);
+      var flat = [];
+      paths.forEach(function (el) {
+        var L = el.getTotalLength();
+        el.style.strokeDasharray = L + ' ' + L;
+        el.style.strokeDashoffset = L;
+        flat.push({ q: { el: el, len: L }, nib: nib });
+      });
+      var sp0 = flat[0].q.el.getPointAtLength(0);
+      nib.setAttribute('transform', 'translate(' + sp0.x + ' ' + sp0.y + ')');
+      animateSequence(flat, 0.8, function () {
+        container.classList.add('sketch-done');
+      });
     }
   };
 

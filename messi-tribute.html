@@ -430,6 +430,53 @@
     margin-top: 1.2rem;
   }
 
+  /* ── MARGIN SKETCH (doodle beside the closing note) ── */
+  .note__row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .margin-sketch {
+    flex: 0 0 auto;
+    width: clamp(150px, 22vw, 210px);
+    color: var(--ink);
+    opacity: 0.9;
+    transform: rotate(-2deg);
+  }
+
+  .margin-sketch svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .note__main {
+    flex: 1 1 auto;
+    max-width: 360px;
+    text-align: left;
+  }
+
+  @media (max-width: 720px) {
+    .note__row {
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .margin-sketch {
+      width: clamp(120px, 40vw, 150px);
+      transform: rotate(-1.5deg);
+      order: -1;
+    }
+
+    .note__main {
+      max-width: none;
+      text-align: center;
+    }
+  }
+
   /* ── STAT CARDS (downloadable) ── */
   .cards {
     padding: 5rem 1.5rem;
@@ -2693,10 +2740,80 @@
 <!-- ═══ NOTE ═══ -->
 <section class="note" id="note" aria-label="Retirement note" data-cmd="The retirement note" data-cmd-sub="paraphrased, written in ink">
   <div class="note__card">
-    <div class="ink-block ink-note" aria-label="I gave everything for this shirt. Gracias, Argentina.">
-      <span class="ink-line" data-text="I gave everything for this shirt."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
-      <span class="ink-line" data-text="Gracias, Argentina."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
-      <span class="ink-fallback">I gave everything for this shirt.<br>Gracias, Argentina.</span>
+    <div class="note__row">
+      <!-- Margin doodle: original loose line sketch, not a photo reproduction -->
+      <div class="margin-sketch" data-sketch aria-hidden="true">
+        <svg viewBox="0 0 340 420" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <!-- hair -->
+          <path stroke-width="4" d="M 198,46 C 204,38 213,34 222,36"/>
+          <path stroke-width="4" d="M 206,41 C 213,34 223,33 230,39"/>
+          <path stroke-width="3.5" d="M 194,53 C 199,44 206,38 214,36"/>
+          <!-- head, loose overshoot -->
+          <path stroke-width="4" d="M 238,62 C 240,46 228,36 213,37 C 197,38 188,50 190,66 C 192,82 203,92 217,91 C 231,90 239,78 237,63 C 235,52 227,44 218,41"/>
+          <path stroke-width="3" d="M 201,69 C 199,73 200,78 203,81"/>
+          <!-- neck -->
+          <path stroke-width="3.5" d="M 213,90 C 211,100 209,108 208,115"/>
+          <path stroke-width="3.5" d="M 224,88 C 223,98 222,105 222,113"/>
+          <!-- shoulders, slight forward lean -->
+          <path stroke-width="4" d="M 170,126 C 184,116 204,112 224,116 C 235,118 243,123 250,130"/>
+          <path stroke-width="3.5" d="M 208,116 C 214,123 223,124 231,121"/>
+          <path stroke-width="4" d="M 170,126 C 164,152 162,182 165,210 C 166,226 168,238 171,247"/>
+          <path stroke-width="4" d="M 250,130 C 252,158 250,186 244,212 C 240,230 234,242 228,250"/>
+          <!-- the 10 -->
+          <path stroke-width="4.5" d="M 208,162 C 207,174 207,186 208,198"/>
+          <path stroke-width="3.5" d="M 201,169 C 204,164 207,162 211,161"/>
+          <path stroke-width="4.5" d="M 236,163 C 228,164 224,173 224,183 C 224,193 229,201 237,200 C 244,199 248,191 247,180 C 246,170 242,164 236,163"/>
+          <!-- sleeves -->
+          <path stroke-width="3.5" d="M 170,126 C 161,132 155,141 151,150 C 158,154 166,153 172,148"/>
+          <path stroke-width="3.5" d="M 250,130 C 258,135 264,143 268,153 C 260,157 252,155 246,150"/>
+          <!-- back arm swinging -->
+          <path stroke-width="3.5" d="M 151,150 C 144,166 139,181 137,196"/>
+          <path stroke-width="3.5" d="M 137,196 C 139,210 145,222 153,232"/>
+          <path stroke-width="3" d="M 153,232 C 157,236 161,238 166,238"/>
+          <!-- front arm -->
+          <path stroke-width="3.5" d="M 268,153 C 274,167 278,180 280,193"/>
+          <path stroke-width="3.5" d="M 280,193 C 278,207 272,219 263,229"/>
+          <path stroke-width="3" d="M 263,229 C 259,233 255,235 250,235"/>
+          <!-- shorts -->
+          <path stroke-width="3.5" d="M 165,244 C 182,252 206,254 228,248"/>
+          <path stroke-width="3.5" d="M 165,244 C 160,262 159,277 162,291"/>
+          <path stroke-width="3.5" d="M 228,248 C 231,264 231,278 227,291"/>
+          <path stroke-width="3" d="M 192,253 C 190,266 190,279 192,290"/>
+          <path stroke-width="3" d="M 162,291 C 170,295 180,295 192,290"/>
+          <path stroke-width="3" d="M 192,290 C 203,295 215,294 227,291"/>
+          <path stroke-width="2.5" d="M 173,262 L 179,273"/>
+          <path stroke-width="2.5" d="M 219,262 L 214,274"/>
+          <!-- back leg, pushing off -->
+          <path stroke-width="4" d="M 172,290 C 158,308 144,328 133,346"/>
+          <path stroke-width="4" d="M 133,346 C 127,354 122,360 119,365"/>
+          <path stroke-width="4" d="M 119,365 C 110,367 102,369 96,372 C 104,375 114,373 121,370"/>
+          <path stroke-width="2.5" d="M 127,352 L 138,348"/>
+          <path stroke-width="2.5" d="M 124,358 L 135,354"/>
+          <!-- front leg, low and over the ball -->
+          <path stroke-width="4" d="M 214,291 C 222,308 228,324 231,338"/>
+          <path stroke-width="4" d="M 231,338 C 234,350 238,360 242,368"/>
+          <path stroke-width="4" d="M 242,368 C 250,372 260,374 269,374 C 260,378 249,377 241,374"/>
+          <path stroke-width="2.5" d="M 232,348 L 243,346"/>
+          <path stroke-width="2.5" d="M 235,356 L 246,354"/>
+          <!-- ball at the feet, wobbly -->
+          <path stroke-width="4" d="M 308,352 C 310,335 298,325 284,326 C 268,327 259,338 260,353 C 261,369 271,377 285,376 C 299,375 309,365 308,351 C 307,340 300,332 291,330"/>
+          <path stroke-width="2.5" d="M 274,341 C 280,337 288,337 293,341"/>
+          <path stroke-width="2.5" d="M 279,363 C 283,361 288,361 291,363"/>
+          <path stroke-width="2.5" d="M 288,317 C 294,315 300,316 304,320"/>
+          <!-- ground -->
+          <path stroke-width="3" d="M 92,376 C 140,382 200,384 262,382 C 296,381 320,377 334,372"/>
+          <path stroke-width="2.5" d="M 120,376 L 127,369"/>
+          <path stroke-width="2.5" d="M 250,380 L 257,373"/>
+          <path stroke-width="2.5" d="M 308,374 L 315,367"/>
+        </svg>
+      </div>
+      <div class="note__main">
+        <div class="ink-block ink-note" aria-label="I gave everything for this shirt. Gracias, Argentina.">
+          <span class="ink-line" data-text="I gave everything for this shirt."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
+          <span class="ink-line" data-text="Gracias, Argentina."><svg class="ink-svg" aria-hidden="true" focusable="false"></svg></span>
+          <span class="ink-fallback">I gave everything for this shirt.<br>Gracias, Argentina.</span>
+        </div>
+      </div>
     </div>
     <p class="note__text note__text--small">
       The rest of the page was a long, quiet thank-you — for every match, every goal, every moment in blue and white.
@@ -3043,6 +3160,7 @@
 </script>
 
 <script src="ink.js" defer></script>
+<script src="sketch.js" defer></script>
 <script src="heatmap.js" defer></script>
 <script src="note.js" defer></script>
 <script src="stars.js" defer></script>
